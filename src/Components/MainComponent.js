@@ -5,6 +5,7 @@ const MainComponent = () => {
     const [ typedWord, setTypedWord ] = useState("") 
     const [ sentance, setSentance ] = useState([])
     const [ key , setKey ] = useState("")
+    const [visibility, setVisibility] = useState("visible")
 
     const handleKeyDown = (e) => {
         setKey(e.key)
@@ -13,7 +14,13 @@ const MainComponent = () => {
     useEffect(() => {
         setSentance(flashWord())
         document.addEventListener("keydown", handleKeyDown)
-        return () => document.removeEventListener("keydown", handleKeyDown)
+        const interval = setInterval(() => {
+            setVisibility(prev => prev === "visible" ? "hidden" : "visible")
+        }, 500)
+        return () => {
+            document.removeEventListener("keydown", handleKeyDown)
+            clearInterval(interval)
+        }
     },[])
 
     useEffect(() => {
@@ -24,9 +31,10 @@ const MainComponent = () => {
     },[key,sentance])
 
     return (
-        <div>
-            <span style = {{color : "red"}}>{typedWord}</span>
-            {sentance}
+        <div style={{fontSize: "20px"}}>
+            <span style = {{color : "red", letterSpacing: "3px"}}>{typedWord}</span>
+            <div style = {{borderLeft: " 1px solid", display: 'inline', visibility: visibility}}></div>
+            <span style = {{letterSpacing: "3px"}}>{sentance}</span>
         </div>
     )
 }
